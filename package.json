@@ -27,11 +27,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iainbwilliams-cpu/lenderwiki-mcp-server.git"
+    "url": "git+https://github.com/lenderwiki/mcp-server.git"
   },
   "homepage": "https://lenderwiki.com",
   "bugs": {
-    "url": "https://github.com/iainbwilliams-cpu/lenderwiki-mcp-server/issues"
+    "url": "https://github.com/lenderwiki/mcp-server/issues"
   },
   "engines": {
     "node": ">=18.0.0"
