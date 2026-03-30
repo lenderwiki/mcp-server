@@ -1,0 +1,49 @@
+{
+  "name": "lenderwiki-mcp-server",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) server for LenderWiki — search, compare, and analyze 13,000+ US consumer lenders",
+  "type": "module",
+  "bin": {
+    "lenderwiki-mcp": "./dist/index.mjs"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node dist/index.mjs",
+    "dev": "npx tsx src/index.ts"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "lenderwiki",
+    "lenders",
+    "personal-loans",
+    "consumer-finance",
+    "fintech",
+    "ai-tools",
+    "claude",
+    "llm"
+  ],
+  "author": "LenderWiki",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iainbwilliams-cpu/lenderwiki-mcp-server.git"
+  },
+  "homepage": "https://lenderwiki.com",
+  "bugs": {
+    "url": "https://github.com/iainbwilliams-cpu/lenderwiki-mcp-server/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.21.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.0"
+  }
+}
