@@ -46,7 +46,7 @@ npm install lenderwiki-mcp-server
 Or clone and build from source:
 
 ```bash
-git clone https://github.com/iainbwilliams-cpu/lenderwiki-mcp-server.git
+git clone https://github.com/lenderwiki/mcp-server.git
 cd lenderwiki-mcp-server
 npm install
 npm run build
@@ -215,7 +215,7 @@ Data is sourced from lender websites, NerdWallet, Bankrate, CFPB, BBB, and regul
 ## Development
 
 ```bash
-git clone https://github.com/iainbwilliams-cpu/lenderwiki-mcp-server.git
+git clone https://github.com/lenderwiki/mcp-server.git
 cd lenderwiki-mcp-server
 npm install
 npm run build
