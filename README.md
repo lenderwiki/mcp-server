@@ -126,6 +126,39 @@ If published to npm, you can use it directly:
 }
 ```
 
+
+
+  ## Hosted HTTP Endpoint (Smithery / Remote MCP)
+
+  LenderWiki also hosts the MCP server over HTTP so you can connect without running anything locally.
+
+  ### Streamable HTTP (Recommended)
+
+  **Endpoint:** `https://lenderwiki.com/api/mcp`
+
+  This implements the [MCP Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http). Use this for Smithery, remote MCP clients, and any tool that supports HTTP-based MCP.
+
+  ```
+  POST https://lenderwiki.com/api/mcp
+  Content-Type: application/json
+  Accept: application/json, text/event-stream
+  ```
+
+  ### Legacy SSE
+
+  For clients that only support the older SSE transport:
+
+  - **SSE endpoint:** `GET https://lenderwiki.com/api/sse`
+  - **Message endpoint:** `POST https://lenderwiki.com/api/messages?sessionId=<id>`
+
+  ### Smithery Configuration
+
+  When submitting to Smithery, use:
+
+  - **Transport:** Streamable HTTP
+  - **URL:** `https://lenderwiki.com/api/mcp`
+  - **Authentication:** None required (rate-limited by IP)
+  
 ## Tools Reference
 
 ### `find_lenders`
