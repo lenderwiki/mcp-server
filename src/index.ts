@@ -38,13 +38,16 @@ server.tool(
     limit: z.number().min(1).max(50).optional().describe("Maximum results to return (default 10)"),
   },
   async (params) => {
+    const needsPostFilter = params.credit_score !== undefined || params.min_amount !== undefined || params.max_amount !== undefined;
+    const requestedLimit = params.limit ?? 10;
+
     let query = supabase
       .from("lenders")
       .select("id, slug, legal_name, display_name, lender_type, publication_status, data_confidence, headquarters_state, website_url, affiliate_url, cfpb_complaint_count_12mo, bbb_rating, google_rating, google_review_count, has_active_warnings, accepts_itin, is_active, last_verified_at, editorial_verdict, customers_praise, customers_warn")
       .in("publication_status", PUBLIC_STATUSES)
       .eq("is_active", true)
       .order("data_confidence", { ascending: false })
-      .limit(params.limit ?? 10);
+      .limit(needsPostFilter ? 200 : requestedLimit);
 
     if (params.state) {
       query = query.eq("headquarters_state", params.state.toUpperCase());
@@ -109,12 +112,16 @@ server.tool(
         }
         filtered = filtered.filter(l => {
           const amounts = lenderAmounts.get(l.id);
-          if (!amounts) return true;
+          if (!amounts) return false;
           if (params.min_amount !== undefined && amounts.maxAmt < params.min_amount) return false;
           if (params.max_amount !== undefined && amounts.minAmt > params.max_amount) return false;
           return true;
         });
       }
+    }
+
+    if (needsPostFilter) {
+      filtered = filtered.slice(0, requestedLimit);
     }
 
     const results = filtered.map(l => {
