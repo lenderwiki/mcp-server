@@ -14,6 +14,25 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const PUBLIC_STATUSES = ["public_unverified", "public_verified", "citable", "disputed", "archived"];
 
+interface ProductRow {
+  lender_id: string;
+  min_amount: number | null;
+  max_amount: number | null;
+  apr_max: number | null;
+  product_type: string | null;
+  states_available: string[] | null;
+  states_excluded: string[] | null;
+  cosigner_allowed: boolean | null;
+}
+
+interface EligibilityRow {
+  lender_id: string;
+  min_credit_score: number | null;
+  credit_check_type: string | null;
+  accepts_itin: boolean | null;
+  cosigner_allowed: boolean | null;
+}
+
 function calcMonthlyPayment(principal: number, annualRate: number, months: number): number {
   if (annualRate === 0) return principal / months;
   const r = annualRate / 100 / 12;
@@ -50,8 +69,7 @@ server.tool(
       .in("publication_status", ["public_verified", "public_unverified", "citable"])
       .eq("is_active", true)
       .neq("lender_type", "non_consumer")
-      .order("data_confidence", { ascending: false })
-      .limit(200);
+      .order("data_confidence", { ascending: false });
 
     if (params.lender_type) {
       query = query.eq("lender_type", params.lender_type);
@@ -76,24 +94,24 @@ server.tool(
     const [prodRes, eligRes] = await Promise.all([
       needsProducts
         ? supabase.from("lender_products").select("lender_id, min_amount, max_amount, apr_max, product_type, states_available, states_excluded, cosigner_allowed").in("lender_id", lenderIds)
-        : Promise.resolve({ data: null }),
+        : Promise.resolve({ data: null as ProductRow[] | null }),
       needsEligibility
         ? supabase.from("product_eligibility").select("lender_id, min_credit_score, credit_check_type, accepts_itin, cosigner_allowed").in("lender_id", lenderIds)
-        : Promise.resolve({ data: null }),
+        : Promise.resolve({ data: null as EligibilityRow[] | null }),
     ]);
 
-    const productsByLender = new Map<string, any[]>();
+    const productsByLender = new Map<string, ProductRow[]>();
     if (prodRes.data) {
-      for (const p of prodRes.data) {
+      for (const p of prodRes.data as ProductRow[]) {
         const arr = productsByLender.get(p.lender_id) ?? [];
         arr.push(p);
         productsByLender.set(p.lender_id, arr);
       }
     }
 
-    const eligByLender = new Map<string, any[]>();
+    const eligByLender = new Map<string, EligibilityRow[]>();
     if (eligRes.data) {
-      for (const e of eligRes.data) {
+      for (const e of eligRes.data as EligibilityRow[]) {
         const arr = eligByLender.get(e.lender_id) ?? [];
         arr.push(e);
         eligByLender.set(e.lender_id, arr);
@@ -179,7 +197,7 @@ server.tool(
 
     filtered = filtered.slice(0, requestedLimit);
 
-    const results = filtered.map((l: any) => {
+    const results = filtered.map(l => {
       const lines: string[] = [
         `## ${l.display_name}`,
         `**Type:** ${l.lender_type} | **HQ:** ${l.headquarters_state || "N/A"}`,
