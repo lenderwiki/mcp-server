@@ -16,7 +16,7 @@
 
   | Tool | Description |
   |------|-------------|
-  | `find_lenders` | Search lenders by state, type, credit score, loan amount range, ITIN acceptance, and more |
+  | `find_lenders` | Search lenders by state, type, credit score, ITIN acceptance, cosigner, loan amount, product type, APR, and credit check type |
   | `get_lender_profile` | Get a comprehensive lender profile — products, rates, eligibility, reviews, regulatory status |
   | `compare_lenders` | Side-by-side comparison table for 2–5 lenders |
   | `check_eligibility` | Preliminary eligibility check based on a user's financial profile |
@@ -31,6 +31,7 @@
   - *"I have a 620 credit score, $45k income, and I'm in Texas. Check if I'm eligible for Oportun"*
   - *"What lenders accept applicants with no credit history?"*
   - *"Find online lenders with loan amounts between $5,000 and $20,000"*
+  - *"Which lenders allow cosigners and don't do a hard credit pull?"*
 
   ## Quick Start
 
@@ -170,12 +171,16 @@
 
   | Parameter | Type | Description |
   |-----------|------|-------------|
-  | `state` | string | Two-letter US state code (e.g. `"CA"`) |
-  | `lender_type` | enum | `online`, `bank`, `credit_union`, `cdfi`, `nonprofit`, `tribal`, `fintech` |
+  | `state` | string | Two-letter US state code (e.g. `"CA"`) — filters to lenders available in that state |
+  | `lender_type` | enum | `online`, `bank`, `credit_union`, `cdfi`, `nonprofit`, `tribal`, `fintech`, `consumer_finance`, `traditional` |
   | `accepts_itin` | boolean | Filter for ITIN-accepting lenders |
-  | `min_amount` | number | Minimum loan amount needed — filters to lenders offering at least this amount |
-  | `max_amount` | number | Maximum loan amount needed — filters to lenders whose minimum is at or below this amount |
+  | `cosigner` | boolean | Filter for lenders that accept cosigners |
+  | `max_apr` | number | Maximum APR to filter by |
+  | `min_amount` | number | Minimum loan amount the borrower needs — filters to lenders that offer at least this amount |
+  | `max_amount` | number | Maximum loan amount — filters to lenders with a minimum at or below this |
   | `credit_score` | number | Filter to lenders accepting this score |
+  | `product_type` | string | Product type (e.g. `"personal_loan"`, `"credit_builder"`, `"line_of_credit"`, `"debt_consolidation"`) |
+  | `credit_check` | enum | `none`, `soft`, `hard` — `"none"` returns lenders with no hard pull |
   | `limit` | number | Max results, 1–50 (default 10) |
 
   **Example tool call:**
@@ -192,7 +197,7 @@
   }
   ```
 
-  **Response format:** Markdown text listing each matching lender with display name, type, state, data confidence, editorial verdict, BBB and Google ratings, CFPB complaint count, ITIN acceptance, customer praise/warnings, website URL, and LenderWiki profile link.
+  **Response format:** Markdown text listing each matching lender with display name, type, headquarters state, data confidence, editorial verdict, BBB and Google ratings, CFPB complaint count, ITIN acceptance, customer praise/warnings, website URL, and LenderWiki profile link.
 
   ### `get_lender_profile`
 
@@ -255,7 +260,7 @@
   | `employment_type` | enum | `W2`, `self_employed`, `1099`, `gig`, `unemployed`, `retired`, `student` |
   | `has_itin` | boolean | Uses ITIN instead of SSN |
   | `loan_amount` | number | Desired amount in USD |
-  | `has_bank_account` | boolean | Has active bank account |
+  | `has_bank_account` | boolean | Has a bank account |
   | `has_bankruptcy` | boolean | Has bankruptcy on record |
 
   **Example tool call:**
